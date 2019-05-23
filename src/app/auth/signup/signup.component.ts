@@ -7,11 +7,22 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent implements OnInit {
+  maxDate: Date;
+
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.maxDate = this.getMaximumDate();
+  }
 
   onSubmit(signupNgForm: NgForm) {
     console.log(signupNgForm);
+  }
+
+  private getMaximumDate(): Date {
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setFullYear(today.getFullYear() - 18);
+    return maxDate;
   }
 }

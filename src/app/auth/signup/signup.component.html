@@ -38,9 +38,15 @@
       <mat-error>Password must be at least 6 characters.</mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput [matDatepicker]="picker" placeholder="Your birthdate" />
+      <input
+        matInput
+        [matDatepicker]="picker"
+        placeholder="Your birthdate"
+        [max]="maxDate"
+      />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
+      <mat-hint>You must be at least 18 years old to sign up.</mat-hint>
     </mat-form-field>
     <button type="submit" mat-raised-button color="primary">Submit</button>
   </form>
