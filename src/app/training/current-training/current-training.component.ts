@@ -20,7 +20,7 @@ export class CurrentTrainingComponent implements OnInit {
 
   stop() {
     clearInterval(this.timer);
-    let dialogRef: MatDialogRef<
+    const dialogRef: MatDialogRef<
       StopTrainingComponent,
       boolean
     > = this.dialog.open(StopTrainingComponent, {
@@ -28,7 +28,9 @@ export class CurrentTrainingComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(isExitConfirmed => {
-      if (isExitConfirmed) this.trainingExit.emit();
+      if (isExitConfirmed) {
+        this.trainingExit.emit();
+      }
       this.startOrResumeTimer();
     });
   }

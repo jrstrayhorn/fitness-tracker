@@ -17,6 +17,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { StopTrainingComponent } from './training/current-training/stop-training/stop-training.component';
+import { AuthService } from './auth/auth.service';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,7 @@ import { StopTrainingComponent } from './training/current-training/stop-training
     MaterialModule,
     FormsModule
   ],
-  providers: [],
+  providers: [AuthService], // this will register service as singleton will only have one instance used throughout app
   bootstrap: [AppComponent],
   entryComponents: [StopTrainingComponent] // not by selector or routing, like a dynamic dialog
 })
