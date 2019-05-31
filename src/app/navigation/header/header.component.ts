@@ -14,18 +14,16 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  @Output() sidenavToggle = new EventEmitter<void>();
+  private authSubscription: Subscription;
+
   isAuth = false;
-  authSubscription: Subscription;
+
+  @Output() sidenavToggle = new EventEmitter<void>();
 
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    this.authSubscription = this.authService.authChanged$.subscribe(
-      authStatus => {
-        this.isAuth = authStatus;
-      }
-    );
+    this.subscribeToAuthService();
   }
 
   toggleSidenav() {
@@ -34,5 +32,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.authSubscription.unsubscribe();
+  }
+
+  private subscribeToAuthService() {
+    this.authSubscription = this.authService.authChanged$.subscribe(
+      authStatus => (this.isAuth = authStatus)
+    );
   }
 }
