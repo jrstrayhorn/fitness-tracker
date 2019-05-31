@@ -1,25 +1,34 @@
 import { Injectable } from '@angular/core';
 import { User } from './user.model';
 import { AuthData } from './auth-data.model';
+import { Subject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private authChange = new Subject<boolean>();
   private user: User;
+
+  public readonly authChanged$: Observable<
+    boolean
+  > = this.authChange.asObservable();
 
   constructor() {}
 
   registerUser(authData: AuthData): void {
     this.user = this.createUser(authData);
+    this.changeAuthStatus(true);
   }
 
   login(authData: AuthData): void {
     this.user = this.createUser(authData);
+    this.changeAuthStatus(true);
   }
 
   logout(): void {
     this.user = null;
+    this.changeAuthStatus(false);
   }
 
   getUser(): User {
@@ -37,5 +46,9 @@ export class AuthService {
       email: authData.email,
       userId: Math.round(Math.random() * 10000).toString()
     };
+  }
+
+  private changeAuthStatus(isLoggedIn: boolean): void {
+    this.authChange.next(isLoggedIn);
   }
 }
