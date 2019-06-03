@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { User } from './user.model';
 import { AuthData } from './auth-data.model';
 import { Subject, Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -14,21 +15,22 @@ export class AuthService {
     boolean
   > = this.authChange.asObservable();
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   registerUser(authData: AuthData): void {
     this.user = this.createUser(authData);
-    this.changeAuthStatus(true);
+    this.updateAuthStatusAndRouteToHomePage();
   }
 
   login(authData: AuthData): void {
     this.user = this.createUser(authData);
-    this.changeAuthStatus(true);
+    this.updateAuthStatusAndRouteToHomePage();
   }
 
   logout(): void {
     this.user = null;
     this.changeAuthStatus(false);
+    this.navigateTo(['/login']);
   }
 
   getUser(): User {
@@ -46,6 +48,15 @@ export class AuthService {
       email: authData.email,
       userId: Math.round(Math.random() * 10000).toString()
     };
+  }
+
+  private updateAuthStatusAndRouteToHomePage(): void {
+    this.changeAuthStatus(true);
+    this.navigateTo(['/training']);
+  }
+
+  private navigateTo(commands: string[]): void {
+    this.router.navigate(commands);
   }
 
   private changeAuthStatus(isLoggedIn: boolean): void {

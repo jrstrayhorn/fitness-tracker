@@ -13,7 +13,7 @@
       </ng-container>
       <ng-container *ngIf="isAuth">
         <li><a routerLink="/training">Training</a></li>
-        <li><a>Logout</a></li>
+        <li><a style="cursor: pointer" (click)="logout()">Logout</a></li>
       </ng-container>
     </ul>
   </div>
