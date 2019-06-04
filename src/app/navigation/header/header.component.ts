@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.authSubscription.unsubscribe();
   }
 
-  private subscribeToAuthService() {
+  private subscribeToAuthService(): void {
     this.authSubscription = this.authService.authChanged$.subscribe(
       authStatus => (this.isAuth = authStatus)
     );

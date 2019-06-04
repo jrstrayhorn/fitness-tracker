@@ -6,7 +6,7 @@
     <mat-card-content fxLayoutAlign="center">
       <mat-form-field>
         <mat-label>Available Exercises</mat-label>
-        <mat-select>
+        <mat-select [(value)]="selectedExerciseId">
           <mat-option
             *ngFor="let exercise of availableExercises"
             [value]="exercise.id"

@@ -8,8 +8,9 @@ import { Exercise } from '../exercise.model';
   styleUrls: ['./new-training.component.css']
 })
 export class NewTrainingComponent implements OnInit {
+  selectedExerciseId: string;
   availableExercises: Exercise[] = [];
-  @Output() trainingStart = new EventEmitter<void>();
+  //@Output() trainingStart = new EventEmitter<void>();
 
   constructor(private trainingService: TrainingService) {}
 
@@ -18,6 +19,7 @@ export class NewTrainingComponent implements OnInit {
   }
 
   startTraining() {
-    this.trainingStart.emit();
+    this.trainingService.startExercise(this.selectedExerciseId);
+    //this.trainingStart.emit();
   }
 }
