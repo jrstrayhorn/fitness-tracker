@@ -16,6 +16,6 @@ export class TrainingService {
   constructor() {}
 
   getAvailableExercises(): Exercise[] {
-    return this.availableExercises;
+    return this.availableExercises.slice(); // will create new copy of the array; allow to edit array in other areas without changing original
   }
 }
