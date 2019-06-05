@@ -45,11 +45,18 @@ export class CurrentTrainingComponent implements OnInit {
   }
 
   private startOrResumeTimer() {
+    const step = this.getStep(
+      this.trainingService.getCurrentExercise().duration
+    );
     this.timer = <any>setInterval(() => {
-      this.progress = this.progress + 5;
+      this.progress = this.progress + 1;
       if (this.progress >= 100) {
         clearInterval(this.timer);
       }
-    }, 1000);
+    }, step);
+  }
+
+  private getStep(duration: number): number {
+    return (duration / 100) * 1000;
   }
 }

@@ -15,12 +15,7 @@ export class TrainingService {
   ];
   /** stores currently running exercise in the app */
   private currentExercise: Exercise;
-  private exerciseStart = new Subject<boolean>();
   private exerciseChanged = new Subject<Exercise>();
-
-  public readonly exerciseStarted$: Observable<
-    boolean
-  > = this.exerciseStart.asObservable();
 
   public readonly exerciseChanged$: Observable<
     Exercise
@@ -48,7 +43,6 @@ export class TrainingService {
   }
 
   private emitCurrentExercise(): void {
-    //this.exerciseStart.next(isRunning);
     this.exerciseChanged.next({ ...this.currentExercise });
   }
 }
