@@ -8,7 +8,7 @@ import { TrainingService } from './training.service';
   styleUrls: ['./training.component.css']
 })
 export class TrainingComponent implements OnInit, OnDestroy {
-  private trainingSubscription: Subscription;
+  private exerciseSubscription: Subscription;
 
   ongoingTraining = false;
 
@@ -19,12 +19,15 @@ export class TrainingComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.trainingSubscription.unsubscribe();
+    this.exerciseSubscription.unsubscribe();
   }
 
   private subscribeToTrainingService(): void {
-    this.trainingSubscription = this.trainingService.exerciseStarted$.subscribe(
-      exerciseStarted => (this.ongoingTraining = exerciseStarted)
+    this.exerciseSubscription = this.trainingService.exerciseChanged$.subscribe(
+      exercise =>
+        exercise
+          ? (this.ongoingTraining = true)
+          : (this.ongoingTraining = false)
     );
   }
 }
