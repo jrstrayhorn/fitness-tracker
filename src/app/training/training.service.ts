@@ -43,8 +43,8 @@ export class TrainingService {
       date: new Date(),
       state: 'completed'
     });
-    this.currentExercise = null;
-    this.exerciseChanged.next(null);
+    this.clearCurrentExercise();
+    this.emitClearedExercise();
     //this.emitCurrentExercise();
   }
 
@@ -56,8 +56,8 @@ export class TrainingService {
       date: new Date(),
       state: 'cancelled'
     });
-    this.currentExercise = null;
-    this.exerciseChanged.next(null);
+    this.clearCurrentExercise();
+    this.emitClearedExercise();
     //this.emitCurrentExercise();
   }
 
@@ -67,7 +67,15 @@ export class TrainingService {
     );
   }
 
+  private clearCurrentExercise(): void {
+    this.currentExercise = null;
+  }
+
   private emitCurrentExercise(): void {
     this.exerciseChanged.next({ ...this.currentExercise });
+  }
+
+  private emitClearedExercise(): void {
+    this.exerciseChanged.next(null);
   }
 }
