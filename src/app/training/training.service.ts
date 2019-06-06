@@ -16,6 +16,7 @@ export class TrainingService {
   /** stores currently running exercise in the app */
   private currentExercise: Exercise;
   private exerciseChanged = new Subject<Exercise>();
+  private completedExercises: Exercise[] = [];
 
   public readonly exerciseChanged$: Observable<
     Exercise
@@ -34,6 +35,30 @@ export class TrainingService {
   startExercise(selectedId: string): void {
     this.setCurrentExercise(selectedId);
     this.emitCurrentExercise();
+  }
+
+  completeExercise() {
+    this.completedExercises.push({
+      ...this.currentExercise,
+      date: new Date(),
+      state: 'completed'
+    });
+    this.currentExercise = null;
+    this.exerciseChanged.next(null);
+    //this.emitCurrentExercise();
+  }
+
+  cancelExercise(progress: number) {
+    this.completedExercises.push({
+      ...this.currentExercise,
+      duration: this.currentExercise.duration * (progress / 100),
+      calories: this.currentExercise.duration * (progress / 100),
+      date: new Date(),
+      state: 'cancelled'
+    });
+    this.currentExercise = null;
+    this.exerciseChanged.next(null);
+    //this.emitCurrentExercise();
   }
 
   private setCurrentExercise(selectedId: string): void {
