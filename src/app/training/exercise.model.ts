@@ -18,7 +18,10 @@ export class ExerciseListing {
     return this.exercises.slice(); // return a copy
   }
 
-  addCancelExercise(cancelExercise: Exercise): void {}
-
-  addCompleteExercise(completeExercise: Exercise): void {}
+  addExercise(exercise: Exercise): void {
+    this.exercises.push({
+      ...exercise,
+      date: new Date()
+    });
+  }
 }

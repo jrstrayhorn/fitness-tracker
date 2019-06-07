@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Exercise } from './exercise.model';
+import { Exercise, ExerciseListing } from './exercise.model';
 import { Subject, Observable } from 'rxjs';
 
 @Injectable({
@@ -16,7 +16,8 @@ export class TrainingService {
   /** stores currently running exercise in the app */
   private currentExercise: Exercise;
   private exerciseChanged = new Subject<Exercise>();
-  private completedExercises: Exercise[] = [];
+  private completedExercises: Exercise[];
+  private exerciseListing = new ExerciseListing();
 
   public readonly exerciseChanged$: Observable<
     Exercise
@@ -38,27 +39,47 @@ export class TrainingService {
   }
 
   completeExercise() {
-    this.completedExercises.push({
-      ...this.currentExercise,
-      date: new Date(),
-      state: 'completed'
-    });
-    this.clearCurrentExercise();
-    this.emitClearedExercise();
-    //this.emitCurrentExercise();
+    this.completeCurrentExercise();
+    this.addCurrentExerciseToListing();
+    this.resetCurrentExerciseState();
   }
 
   cancelExercise(progress: number) {
-    this.completedExercises.push({
-      ...this.currentExercise,
-      duration: this.currentExercise.duration * (progress / 100),
-      calories: this.currentExercise.duration * (progress / 100),
-      date: new Date(),
-      state: 'cancelled'
-    });
+    this.cancelCurrentExercise(progress);
+    this.addCurrentExerciseToListing();
+    this.resetCurrentExerciseState();
+  }
+
+  private resetCurrentExerciseState(): void {
     this.clearCurrentExercise();
     this.emitClearedExercise();
-    //this.emitCurrentExercise();
+  }
+
+  private addCurrentExerciseToListing() {
+    this.exerciseListing.addExercise(this.currentExercise);
+  }
+
+  private cancelCurrentExercise(progress: number): void {
+    this.currentExercise.duration = this.calculatePercentageProgress(
+      this.currentExercise.duration,
+      progress
+    );
+    this.currentExercise.calories = this.calculatePercentageProgress(
+      this.currentExercise.calories,
+      progress
+    );
+    this.currentExercise.state = 'cancelled';
+  }
+
+  private calculatePercentageProgress(
+    unitToMeasure: number,
+    progress: number
+  ): number {
+    return unitToMeasure * (progress / 100);
+  }
+
+  private completeCurrentExercise(): void {
+    this.currentExercise.state = 'completed';
   }
 
   private setCurrentExercise(selectedId: string): void {
