@@ -18,45 +18,67 @@ export class CurrentTrainingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.getCurrentExercise();
     this.startOrResumeTimer();
   }
 
   stop() {
-    clearInterval(this.timer);
-    const dialogRef: MatDialogRef<
-      StopTrainingComponent,
-      boolean
-    > = this.dialog.open(StopTrainingComponent, {
-      data: { progress: this.progress }
-    });
+    this.deleteTimer();
+    const dialogRef = this.openStopTrainingDialogAndCreateRef();
+    this.subscribeToDialogAfterClosed(dialogRef);
+  }
 
-    dialogRef.afterClosed().subscribe(isExitConfirmed => {
-      if (isExitConfirmed) {
-        this.trainingService.cancelExercise(this.progress);
-      }
-      this.startOrResumeTimer();
+  private openStopTrainingDialogAndCreateRef(): MatDialogRef<
+    StopTrainingComponent,
+    boolean
+  > {
+    return this.dialog.open(StopTrainingComponent, {
+      data: { progress: this.progress }
     });
   }
 
-  private getCurrentExercise() {
-    console.log(this.trainingService.getCurrentExercise().name);
+  private subscribeToDialogAfterClosed(
+    dialogRef: MatDialogRef<StopTrainingComponent, boolean>
+  ): void {
+    dialogRef.afterClosed().subscribe(isExitConfirmed => {
+      isExitConfirmed
+        ? this.trainingService.cancelExercise(this.progress)
+        : this.startOrResumeTimer();
+    });
   }
 
   private startOrResumeTimer() {
-    const step = this.getStep(
-      this.trainingService.getCurrentExercise().duration
+    const intervalToCheckProgress = this.getTimerIntervalBasedOnExerciseDuration(
+      this.trainingService.getCurrentExerciseDuration()
     );
-    this.timer = <any>setInterval(() => {
-      this.progress = this.progress + 1;
-      if (this.progress >= 100) {
-        this.trainingService.completeExercise();
-        clearInterval(this.timer);
-      }
+    this.timer = this.createTimer(intervalToCheckProgress);
+  }
+
+  private createTimer(step: number): number {
+    return <any>setInterval(() => {
+      this.increaseProgress();
+      this.checkProgress();
     }, step);
   }
 
-  private getStep(duration: number): number {
+  private increaseProgress(): void {
+    this.progress++;
+  }
+
+  private checkProgress(): void {
+    if (!this.isProgressDone()) return;
+    this.trainingService.completeExercise();
+    this.deleteTimer();
+  }
+
+  private deleteTimer(): void {
+    clearInterval(this.timer);
+  }
+
+  private isProgressDone(): boolean {
+    return this.progress >= 100;
+  }
+
+  private getTimerIntervalBasedOnExerciseDuration(duration: number): number {
     return (duration / 100) * 1000;
   }
 }

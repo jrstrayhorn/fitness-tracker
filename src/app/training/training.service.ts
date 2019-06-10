@@ -29,8 +29,8 @@ export class TrainingService {
     return this.availableExercises.slice(); // will create new copy of the array; allow to edit array in other areas without changing original
   }
 
-  getCurrentExercise(): Exercise {
-    return { ...this.currentExercise };
+  getCurrentExerciseDuration(): number {
+    return this.getCurrentExercise().duration;
   }
 
   getPastExercises(): Exercise[] {
@@ -52,6 +52,10 @@ export class TrainingService {
     this.cancelCurrentExercise(progress);
     this.addCurrentExerciseToListing();
     this.resetCurrentExerciseState();
+  }
+
+  private getCurrentExercise(): Exercise {
+    return { ...this.currentExercise };
   }
 
   private resetCurrentExerciseState(): void {
