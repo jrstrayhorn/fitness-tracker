@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Exercise, ExerciseListing } from './exercise.model';
+import { Exercise } from './exercise.model';
 import { Subject, Observable } from 'rxjs';
+import { ExerciseListing } from './exercise-listing.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,6 @@ export class TrainingService {
   /** stores currently running exercise in the app */
   private currentExercise: Exercise;
   private exerciseChanged = new Subject<Exercise>();
-  private completedExercises: Exercise[];
   private exerciseListing = new ExerciseListing();
 
   public readonly exerciseChanged$: Observable<
@@ -31,6 +31,10 @@ export class TrainingService {
 
   getCurrentExercise(): Exercise {
     return { ...this.currentExercise };
+  }
+
+  getPastExercises(): Exercise[] {
+    return this.exerciseListing.getExercises();
   }
 
   startExercise(selectedId: string): void {
