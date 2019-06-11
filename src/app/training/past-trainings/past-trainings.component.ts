@@ -20,4 +20,8 @@ export class PastTrainingsComponent implements OnInit {
     this.dataSource.data = this.trainingService.getPastExercises();
     this.dataSource.sort = this.sort;
   }
+
+  applyFilter(filterValue: string): void {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 }
