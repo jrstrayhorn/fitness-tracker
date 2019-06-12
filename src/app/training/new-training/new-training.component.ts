@@ -2,6 +2,7 @@ import { TrainingService } from './../training.service';
 import { Component, OnInit } from '@angular/core';
 import { Exercise } from '../exercise.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-new-training',
@@ -14,13 +15,20 @@ export class NewTrainingComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private trainingService: TrainingService
+    private trainingService: TrainingService,
+    private db: AngularFirestore
   ) {
     this.createForm();
   }
 
   ngOnInit() {
-    this.availableExercises = this.trainingService.getAvailableExercises();
+    //this.availableExercises = this.trainingService.getAvailableExercises();
+    this.db
+      .collection('availableExercises')
+      .valueChanges()
+      .subscribe(result => {
+        console.log(result);
+      });
   }
 
   startTraining() {
