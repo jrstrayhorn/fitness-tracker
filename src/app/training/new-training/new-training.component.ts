@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Exercise } from '../exercise.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-new-training',
@@ -11,7 +12,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 })
 export class NewTrainingComponent implements OnInit {
   newTrainingForm: FormGroup;
-  availableExercises: Exercise[] = [];
+  availableExercises: Observable<any[]>;
 
   constructor(
     private fb: FormBuilder,
@@ -22,13 +23,9 @@ export class NewTrainingComponent implements OnInit {
   }
 
   ngOnInit() {
-    //this.availableExercises = this.trainingService.getAvailableExercises();
-    this.db
+    this.availableExercises = this.db
       .collection('availableExercises')
-      .valueChanges()
-      .subscribe(result => {
-        console.log(result);
-      });
+      .valueChanges();
   }
 
   startTraining() {
