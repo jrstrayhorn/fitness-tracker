@@ -4,6 +4,7 @@ import { Exercise } from '../exercise.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-new-training',
@@ -12,7 +13,7 @@ import { Observable } from 'rxjs';
 })
 export class NewTrainingComponent implements OnInit {
   newTrainingForm: FormGroup;
-  availableExercises: Observable<any[]>;
+  availableExercises: Observable<Exercise[]>;
 
   constructor(
     private fb: FormBuilder,
@@ -25,7 +26,19 @@ export class NewTrainingComponent implements OnInit {
   ngOnInit() {
     this.availableExercises = this.db
       .collection('availableExercises')
-      .valueChanges();
+      .snapshotChanges()
+      .pipe(
+        map(docArray => {
+          return docArray.map(doc => {
+            return <Exercise>{
+              id: doc.payload.doc.id,
+              ...doc.payload.doc.data()
+            };
+          });
+        })
+      );
+
+    //valueChanges doesn't give us the id
   }
 
   startTraining() {
