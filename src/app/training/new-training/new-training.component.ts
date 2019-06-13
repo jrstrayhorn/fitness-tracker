@@ -1,49 +1,45 @@
 import { TrainingService } from './../training.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Exercise } from '../exercise.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-new-training',
   templateUrl: './new-training.component.html',
   styleUrls: ['./new-training.component.css']
 })
-export class NewTrainingComponent implements OnInit {
+export class NewTrainingComponent implements OnInit, OnDestroy {
+  private availableExercisesSubscription: Subscription;
+
   newTrainingForm: FormGroup;
-  availableExercises: Observable<Exercise[]>;
+  availableExercises: Exercise[];
 
   constructor(
     private fb: FormBuilder,
-    private trainingService: TrainingService,
-    private db: AngularFirestore
+    private trainingService: TrainingService
   ) {
     this.createForm();
   }
 
   ngOnInit() {
-    this.availableExercises = this.db
-      .collection('availableExercises')
-      .snapshotChanges()
-      .pipe(
-        map(docArray => {
-          return docArray.map(doc => {
-            return <Exercise>{
-              id: doc.payload.doc.id,
-              ...doc.payload.doc.data()
-            };
-          });
-        })
-      );
+    this.subscribeToAvailableExercisesChanged();
+    this.trainingService.fetchAvailableExercises();
+  }
 
-    //valueChanges doesn't give us the id
+  ngOnDestroy() {
+    this.availableExercisesSubscription.unsubscribe();
   }
 
   startTraining() {
     this.trainingService.startExercise(
       this.newTrainingForm.value.selectedExerciseId
+    );
+  }
+
+  private subscribeToAvailableExercisesChanged(): void {
+    this.trainingService.availableExercisesChanged$.subscribe(
+      exercises => (this.availableExercises = exercises)
     );
   }
 
