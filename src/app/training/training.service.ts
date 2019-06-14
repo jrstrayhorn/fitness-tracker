@@ -66,13 +66,15 @@ export class TrainingService {
 
   completeExercise() {
     this.completeCurrentExercise();
-    this.addCurrentExerciseToListing();
+    //this.addCurrentExerciseToListing();
+    this.addCurrentExerciseToDatabase();
     this.resetCurrentExerciseState();
   }
 
   cancelExercise(progress: number) {
     this.cancelCurrentExercise(progress);
-    this.addCurrentExerciseToListing();
+    //this.addCurrentExerciseToListing();
+    this.addCurrentExerciseToDatabase();
     this.resetCurrentExerciseState();
   }
 
@@ -128,5 +130,9 @@ export class TrainingService {
 
   private emitClearedExercise(): void {
     this.exerciseChanged.next(null);
+  }
+
+  private addCurrentExerciseToDatabase() {
+    this.db.collection('finishedExercises').add(this.currentExercise);
   }
 }
