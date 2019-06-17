@@ -14,6 +14,7 @@ export class TrainingService {
   private currentExercise: Exercise;
   private exerciseChanged = new Subject<Exercise>();
   private availableExercisesChanged = new Subject<Exercise[]>();
+  private pastExercisesChanged = new Subject<Exercise[]>();
   private exerciseListing = new ExerciseListing();
 
   public readonly exerciseChanged$: Observable<
@@ -22,6 +23,9 @@ export class TrainingService {
   public readonly availableExercisesChanged$: Observable<
     Exercise[]
   > = this.availableExercisesChanged.asObservable();
+  public readonly pastExercisesChanged$: Observable<
+    Exercise[]
+  > = this.pastExercisesChanged.asObservable();
 
   constructor(private db: AngularFirestore) {}
 
@@ -57,6 +61,13 @@ export class TrainingService {
 
   getPastExercises(): Exercise[] {
     return this.exerciseListing.getExercises();
+  }
+
+  fetchPastExercises() {
+    this.db
+      .collection<Exercise>('finishedExercises')
+      .valueChanges() // no id returned
+      .subscribe(exercises => this.pastExercisesChanged.next(exercises));
   }
 
   startExercise(selectedId: string): void {
@@ -133,6 +144,9 @@ export class TrainingService {
   }
 
   private addCurrentExerciseToDatabase() {
-    this.db.collection('finishedExercises').add(this.currentExercise);
+    this.db.collection('finishedExercises').add({
+      ...this.currentExercise,
+      date: new Date()
+    });
   }
 }
