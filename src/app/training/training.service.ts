@@ -71,6 +71,10 @@ export class TrainingService {
   }
 
   startExercise(selectedId: string): void {
+    // how to work with a single document
+    // this.db
+    //   .doc('availableExercises/' + selectedId)
+    //   .update({ lastSelected: new Date() });
     this.setCurrentExercise(selectedId);
     this.emitCurrentExercise();
   }
