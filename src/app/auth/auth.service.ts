@@ -3,6 +3,7 @@ import { User } from './user.model';
 import { AuthData } from './auth-data.model';
 import { Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -15,16 +16,30 @@ export class AuthService {
     boolean
   > = this.authChange.asObservable();
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private afAuth: AngularFireAuth) {}
 
   registerUser(authData: AuthData): void {
-    this.user = this.createUser(authData);
-    this.updateAuthStatusAndRouteToHomePage();
+    this.afAuth.auth
+      .createUserWithEmailAndPassword(authData.email, authData.password)
+      .then(result => {
+        console.log(result);
+        this.user = { userId: result.user.uid, email: result.user.email };
+        this.updateAuthStatusAndRouteToHomePage();
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   login(authData: AuthData): void {
-    this.user = this.createUser(authData);
-    this.updateAuthStatusAndRouteToHomePage();
+    this.afAuth.auth
+      .signInWithEmailAndPassword(authData.email, authData.password)
+      .then(result => {
+        console.log(result);
+        this.user = { userId: result.user.uid, email: result.user.email };
+        this.updateAuthStatusAndRouteToHomePage();
+      })
+      .catch(error => console.log(error));
   }
 
   logout(): void {
@@ -42,6 +57,8 @@ export class AuthService {
   isAuth(): boolean {
     return this.user != null;
   }
+
+  private createUserFromAuthCredential() {}
 
   private createUser(authData: AuthData): User {
     return {
