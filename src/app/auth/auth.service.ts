@@ -4,6 +4,7 @@ import { AuthData } from './auth-data.model';
 import { Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { TrainingService } from '../training/training.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,36 +17,56 @@ export class AuthService {
     boolean
   > = this.authChange.asObservable();
 
-  constructor(private router: Router, private afAuth: AngularFireAuth) {}
+  constructor(
+    private router: Router,
+    private afAuth: AngularFireAuth,
+    private trainingService: TrainingService
+  ) {}
+
+  initAuthListener() {
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.user = { userId: user.uid, email: user.email };
+        this.updateAuthStatusAndRouteToHomePage();
+      } else {
+        this.trainingService.cancelSubscriptions();
+        this.user = null;
+        this.changeAuthStatus(false);
+        this.navigateTo(['/login']);
+      }
+    });
+  }
 
   registerUser(authData: AuthData): void {
-    this.afAuth.auth
-      .createUserWithEmailAndPassword(authData.email, authData.password)
-      .then(result => {
-        console.log(result);
-        this.user = { userId: result.user.uid, email: result.user.email };
-        this.updateAuthStatusAndRouteToHomePage();
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    this.afAuth.auth.createUserWithEmailAndPassword(
+      authData.email,
+      authData.password
+    );
+    // .then(result => {
+    //   console.log(result);
+    //   this.user = { userId: result.user.uid, email: result.user.email };
+    //   this.updateAuthStatusAndRouteToHomePage();
+    // })
+    // .catch(error => {
+    //   console.log(error);
+    // });
   }
 
   login(authData: AuthData): void {
-    this.afAuth.auth
-      .signInWithEmailAndPassword(authData.email, authData.password)
-      .then(result => {
-        console.log(result);
-        this.user = { userId: result.user.uid, email: result.user.email };
-        this.updateAuthStatusAndRouteToHomePage();
-      })
-      .catch(error => console.log(error));
+    this.afAuth.auth.signInWithEmailAndPassword(
+      authData.email,
+      authData.password
+    );
+    // .then(result => {
+    //   console.log(result);
+    //   this.user = { userId: result.user.uid, email: result.user.email };
+    //   this.updateAuthStatusAndRouteToHomePage();
+    // })
+    // .catch(error => console.log(error));
   }
 
   logout(): void {
-    this.user = null;
-    this.changeAuthStatus(false);
-    this.navigateTo(['/login']);
+    this.afAuth.auth.signOut();
   }
 
   getUser(): User {

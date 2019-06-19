@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Exercise } from './exercise.model';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, Subscription } from 'rxjs';
 import { ExerciseListing } from './exercise-listing.model';
 import { map } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -16,6 +16,7 @@ export class TrainingService {
   private availableExercisesChanged = new Subject<Exercise[]>();
   private pastExercisesChanged = new Subject<Exercise[]>();
   private exerciseListing = new ExerciseListing();
+  private fbSubs: Subscription[] = [];
 
   public readonly exerciseChanged$: Observable<
     Exercise
@@ -34,23 +35,25 @@ export class TrainingService {
   }
 
   fetchAvailableExercises(): void {
-    this.db
-      .collection('availableExercises')
-      .snapshotChanges()
-      .pipe(
-        map(docArray => {
-          return docArray.map(doc => {
-            return <Exercise>{
-              id: doc.payload.doc.id,
-              ...doc.payload.doc.data()
-            };
-          });
+    this.fbSubs.push(
+      this.db
+        .collection('availableExercises')
+        .snapshotChanges()
+        .pipe(
+          map(docArray => {
+            return docArray.map(doc => {
+              return <Exercise>{
+                id: doc.payload.doc.id,
+                ...doc.payload.doc.data()
+              };
+            });
+          })
+        )
+        .subscribe(exercises => {
+          this.availableExercises = exercises;
+          this.availableExercisesChanged.next([...this.availableExercises]);
         })
-      )
-      .subscribe(exercises => {
-        this.availableExercises = exercises;
-        this.availableExercisesChanged.next([...this.availableExercises]);
-      });
+    );
 
     //valueChanges doesn't give us the id
   }
@@ -64,10 +67,16 @@ export class TrainingService {
   }
 
   fetchPastExercises() {
-    this.db
-      .collection<Exercise>('finishedExercises')
-      .valueChanges() // no id returned
-      .subscribe(exercises => this.pastExercisesChanged.next(exercises));
+    this.fbSubs.push(
+      this.db
+        .collection<Exercise>('finishedExercises')
+        .valueChanges() // no id returned
+        .subscribe(exercises => this.pastExercisesChanged.next(exercises))
+    );
+  }
+
+  cancelSubscriptions() {
+    this.fbSubs.forEach(sub => sub.unsubscribe());
   }
 
   startExercise(selectedId: string): void {
