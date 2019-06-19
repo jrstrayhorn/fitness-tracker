@@ -5,6 +5,7 @@ import { Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { TrainingService } from '../training/training.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,8 @@ export class AuthService {
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
-    private trainingService: TrainingService
+    private trainingService: TrainingService,
+    private snackbar: MatSnackBar
   ) {}
 
   initAuthListener() {
@@ -38,31 +40,21 @@ export class AuthService {
   }
 
   registerUser(authData: AuthData): void {
-    this.afAuth.auth.createUserWithEmailAndPassword(
-      authData.email,
-      authData.password
-    );
-    // .then(result => {
-    //   console.log(result);
-    //   this.user = { userId: result.user.uid, email: result.user.email };
-    //   this.updateAuthStatusAndRouteToHomePage();
-    // })
-    // .catch(error => {
-    //   console.log(error);
-    // });
+    this.afAuth.auth
+      .createUserWithEmailAndPassword(authData.email, authData.password)
+      .then(result => {})
+      .catch(error => {
+        this.snackbar.open(error.message, null, { duration: 3000 });
+      });
   }
 
   login(authData: AuthData): void {
-    this.afAuth.auth.signInWithEmailAndPassword(
-      authData.email,
-      authData.password
-    );
-    // .then(result => {
-    //   console.log(result);
-    //   this.user = { userId: result.user.uid, email: result.user.email };
-    //   this.updateAuthStatusAndRouteToHomePage();
-    // })
-    // .catch(error => console.log(error));
+    this.afAuth.auth
+      .signInWithEmailAndPassword(authData.email, authData.password)
+      .then(result => {})
+      .catch(error => {
+        this.snackbar.open(error.message, null, { duration: 3000 });
+      });
   }
 
   logout(): void {
