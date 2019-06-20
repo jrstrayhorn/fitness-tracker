@@ -60,8 +60,10 @@
       mat-raised-button
       color="primary"
       [disabled]="signupNgForm.invalid"
+      *ngIf="!isLoading"
     >
       Submit
     </button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
   </form>
 </section>
