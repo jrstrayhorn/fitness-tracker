@@ -1,8 +1,9 @@
+import { UIService } from 'src/app/shared/ui.service';
 import { Injectable } from '@angular/core';
 import { Exercise } from './exercise.model';
 import { Subject, Observable, Subscription } from 'rxjs';
 import { ExerciseListing } from './exercise-listing.model';
-import { map } from 'rxjs/operators';
+import { map, finalize } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({
@@ -28,13 +29,14 @@ export class TrainingService {
     Exercise[]
   > = this.pastExercisesChanged.asObservable();
 
-  constructor(private db: AngularFirestore) {}
+  constructor(private db: AngularFirestore, private uiService: UIService) {}
 
   getAvailableExercises(): Exercise[] {
     return this.availableExercises.slice(); // will create new copy of the array; allow to edit array in other areas without changing original
   }
 
   fetchAvailableExercises(): void {
+    this.uiService.loadingStateChanged.next(true);
     this.fbSubs.push(
       this.db
         .collection('availableExercises')
@@ -52,6 +54,7 @@ export class TrainingService {
         .subscribe(exercises => {
           this.availableExercises = exercises;
           this.availableExercisesChanged.next([...this.availableExercises]);
+          this.uiService.loadingStateChanged.next(false);
         })
     );
 

@@ -5,7 +5,6 @@ import { Subject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { TrainingService } from '../training/training.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { UIService } from '../shared/ui.service';
 
 @Injectable({
@@ -23,7 +22,6 @@ export class AuthService {
     private router: Router,
     private afAuth: AngularFireAuth,
     private trainingService: TrainingService,
-    private snackbar: MatSnackBar,
     private uiService: UIService
   ) {}
 
@@ -47,7 +45,7 @@ export class AuthService {
       .createUserWithEmailAndPassword(authData.email, authData.password)
       .then(result => {})
       .catch(error => {
-        this.snackbar.open(error.message, null, { duration: 3000 });
+        this.uiService.showSnackbar(error.message, null, 3000);
       })
       .finally(() => this.uiService.loadingStateChanged.next(false));
   }
@@ -58,7 +56,7 @@ export class AuthService {
       .signInWithEmailAndPassword(authData.email, authData.password)
       .then(result => {})
       .catch(error => {
-        this.snackbar.open(error.message, null, { duration: 3000 });
+        this.uiService.showSnackbar(error.message, null, 3000);
       })
       .finally(() => this.uiService.loadingStateChanged.next(false));
   }
