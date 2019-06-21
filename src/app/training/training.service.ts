@@ -51,11 +51,22 @@ export class TrainingService {
             });
           })
         )
-        .subscribe(exercises => {
-          this.availableExercises = exercises;
-          this.availableExercisesChanged.next([...this.availableExercises]);
-          this.uiService.loadingStateChanged.next(false);
-        })
+        .subscribe(
+          exercises => {
+            this.availableExercises = exercises;
+            this.availableExercisesChanged.next([...this.availableExercises]);
+            this.uiService.loadingStateChanged.next(false);
+          },
+          error => {
+            this.uiService.loadingStateChanged.next(false);
+            this.uiService.showSnackbar(
+              'Fetching Exercises failed, please try again later',
+              null,
+              3000
+            );
+            this.exerciseChanged.next(null);
+          }
+        )
     );
 
     //valueChanges doesn't give us the id

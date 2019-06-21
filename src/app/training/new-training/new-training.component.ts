@@ -31,12 +31,16 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
       isLoading => (this.isLoading = isLoading)
     );
     this.subscribeToAvailableExercisesChanged();
-    this.trainingService.fetchAvailableExercises();
+    this.fetchExercises();
   }
 
   ngOnDestroy() {
     this.availableExercisesSubscription.unsubscribe();
     this.loadingSubs.unsubscribe();
+  }
+
+  fetchExercises() {
+    this.trainingService.fetchAvailableExercises();
   }
 
   startTraining() {
