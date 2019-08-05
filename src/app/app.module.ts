@@ -15,15 +15,10 @@ import { AuthService } from './auth/auth.service';
 import { TrainingService } from './training/training.service';
 import { UIService } from './shared/ui.service';
 import { AuthModule } from './auth/auth.module';
-import { TrainingModule } from './training/training.module';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    WelcomeComponent,
-    HeaderComponent,
-    SidenavListComponent
-  ],
+  declarations: [AppComponent, WelcomeComponent, HeaderComponent, SidenavListComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -32,7 +27,7 @@ import { TrainingModule } from './training/training.module';
     MaterialModule,
     AngularFireModule.initializeApp(environment.firebase),
     AuthModule,
-    TrainingModule
+    AngularFirestoreModule
   ],
   providers: [AuthService, TrainingService, UIService], // this will register service as singleton will only have one instance used throughout app
   bootstrap: [AppComponent]

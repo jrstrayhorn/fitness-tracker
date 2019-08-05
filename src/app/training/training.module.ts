@@ -4,18 +4,12 @@ import { CurrentTrainingComponent } from './current-training/current-training.co
 import { NewTrainingComponent } from './new-training/new-training.component';
 import { PastTrainingsComponent } from './past-trainings/past-trainings.component';
 import { StopTrainingComponent } from './current-training/stop-training/stop-training.component';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { SharedModule } from '../shared/shared.module';
+import { TrainingRoutingModule } from './training-routing.module';
 
 @NgModule({
-  declarations: [
-    TrainingComponent,
-    CurrentTrainingComponent,
-    NewTrainingComponent,
-    PastTrainingsComponent,
-    StopTrainingComponent
-  ],
-  imports: [SharedModule, AngularFirestoreModule],
+  declarations: [TrainingComponent, CurrentTrainingComponent, NewTrainingComponent, PastTrainingsComponent, StopTrainingComponent],
+  imports: [SharedModule, TrainingRoutingModule],
   exports: [],
   entryComponents: [StopTrainingComponent] // not by selector or routing, like a dynamic dialog
 })
