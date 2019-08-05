@@ -3,7 +3,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './auth/auth.guard';
 
-const routes: Routes = [{ path: '', component: WelcomeComponent }, { path: 'training', loadChildren: './training/training.module#TrainingModule' }];
+const routes: Routes = [
+  { path: '', component: WelcomeComponent },
+  { path: 'training', loadChildren: './training/training.module#TrainingModule', canLoad: [AuthGuard] }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
