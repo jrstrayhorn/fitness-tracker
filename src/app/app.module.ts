@@ -16,9 +16,16 @@ import { TrainingService } from './training/training.service';
 import { UIService } from './shared/ui.service';
 import { AuthModule } from './auth/auth.module';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { StoreModule } from '@ngrx/store';
+import { appReducer } from './app.reducer';
 
 @NgModule({
-  declarations: [AppComponent, WelcomeComponent, HeaderComponent, SidenavListComponent],
+  declarations: [
+    AppComponent,
+    WelcomeComponent,
+    HeaderComponent,
+    SidenavListComponent
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -27,7 +34,8 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     MaterialModule,
     AngularFireModule.initializeApp(environment.firebase),
     AuthModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    StoreModule.forRoot({ ui: appReducer })
   ],
   providers: [AuthService, TrainingService, UIService], // this will register service as singleton will only have one instance used throughout app
   bootstrap: [AppComponent]
